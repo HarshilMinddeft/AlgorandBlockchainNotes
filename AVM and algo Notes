@@ -5,6 +5,38 @@ There are 3 types of storage in algo
 2) Box Storage => Contract  => Can be access by the app it belong to
 3) Global Storage => Global =>Can be read by anyone on chain
 
+-when we use @arc4.abimethod(create="require") function will executed while creating conract
+
+* allow_actions types and usage
+
+1. allow_actions=["NoOp"]:
+Definition: NoOp (No Operation) is the most common type of transaction. It is used for general operations and interactions with the contract that do not involve creating, deleting, updating, opting in, or closing out.
+Usage: If a method is marked with allow_actions=["NoOp"], it means that the method can be called only during regular transactions where the smart contract is interacting with other accounts or performing its intended logic after it has been created.
+Example Use Case: Functions like buyAsset, transferFunds, or updatePrice which are meant to be used after the contract is deployed.
+
+2. allow_actions=["UpdateApplication"]:
+Definition: UpdateApplication transactions occur when the application (contract) is being updated. This includes changes to the contract’s approval and clear state programs, or its configuration.
+Usage: If a method is marked with allow_actions=["UpdateApplication"], it means that the method can only be invoked during an application update transaction. This is useful for functions that should only run when the contract is being updated, rather than during creation or regular operations.
+Example Use Case: Functions related to changing contract parameters or settings during updates.
+
+3. allow_actions=["DeleteApplication"]:
+Definition: DeleteApplication transactions occur when the application is being deleted. This is often used to clean up the contract state or transfer assets back to the creator before the contract is removed.
+Usage: If a method is marked with allow_actions=["DeleteApplication"], it means that the method can only be called during the deletion phase. It ensures that any clean-up logic is executed before the contract is removed.
+Example Use Case: Functions for transferring remaining assets back to the contract creator or performing other finalization tasks before contract deletion.
+
+4. allow_actions=["OptIn"]:
+Definition: OptIn transactions occur when an account opts into the contract. This is needed when an account wants to interact with the contract or receive assets from it.
+Usage: If a method is marked with allow_actions=["OptIn"], it means that the method can only be executed when an account opts into the contract. This is useful for ensuring that the contract is prepared for interactions or asset transfers when an account opts in.
+Example Use Case: Functions related to ensuring that the contract account opts into specific assets or interacts with new users.
+
+5. allow_actions=["CloseOut"]:
+Definition: CloseOut transactions occur when an account closes out of the contract. This means that the account is no longer interacting with the contract and any remaining assets or state are handled accordingly.
+Usage: If a method is marked with allow_actions=["CloseOut"], it means that the method can only be executed during a closeout transaction. This is used to manage the finalization or clean-up when an account closes its interaction with the contract.
+Example Use Case: Functions to handle remaining assets or clean-up actions when an account no longer interacts with the contract.
+
+____________________________________________________________________________________________________________________
+
+
 -By adding deleteApplication function smartcontracts can be deleted from algochain
 
 -In algo every contract creation and call is worth 0.001 
@@ -18,8 +50,5 @@ As a partial implementation of the Python programming language, it maintains the
 Every algo smartcontract have an associated application account.
 
 Links =>
-docs
 https://algorandfoundation.github.io/puya/language-guide.html
 https://algorandfoundation.github.io/puya/
-
-Python contract tutorial => https://www.youtube.com/watch?v=J9HhfNe01Pc
