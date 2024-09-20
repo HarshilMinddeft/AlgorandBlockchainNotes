@@ -36,7 +36,9 @@ Example Use Case: Functions to handle remaining assets or clean-up actions when 
 
 ____________________________________________________________________________________________________________________
 
-
+-for sending funds to contract from user wallet, we cannot do using contract function like in solidity safeTransfer,payable function etc, we have to make external function in deploy script for doing that.
+-algorand contract or application address are of 58 characters. eg -4ZNKG3SI54HS5QBOEUF5HWVIFE5XHIVQHH3UQDZNVZLGCMYGYAYOKTR7G4
+-algorand contracts are defined or recognised by appid eg App #1121 inserd of contract address like in solidity
 -By adding deleteApplication function smartcontracts can be deleted from algochain
 
 -In algo every contract creation and call is worth 0.001 
