@@ -51,6 +51,9 @@ As a partial implementation of the Python programming language, it maintains the
 -If we send tokens to smartcontract we are actully sending it to a linked application account.
 Every algo smartcontract have an associated application account.
 
+Algorand dappflow Dispencer sends 1 algo when user enter 1 for withdraw if we use script dispencer eg-PayParams(sender=dispenser.address, receiver=acct.address, amount=1_000_000)
+1000_000 microAlgos is = 1 algo 
+
 Links =>
 https://algorandfoundation.github.io/puya/language-guide.html
 https://algorandfoundation.github.io/puya/
