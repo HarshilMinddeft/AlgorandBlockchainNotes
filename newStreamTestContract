@@ -1,0 +1,90 @@
+from algopy import *
+
+
+class SteamN(ARC4Contract):
+    # State variables
+    streamRate: UInt64  # MicroAlgos per second
+    startTime: UInt64
+    withdrawnAmount: UInt64
+    recipient: Account  # Recipient account
+    balance: UInt64  # Keep track of contract balance
+    isStreaming: bool  # Track streaming status
+    last_withdrawal_time: UInt64  # Track last withdrawal time
+
+    # Create application and initialize state variables
+    @arc4.abimethod(allow_actions=["NoOp"], create="require")
+    def createApplication(self) -> None:
+        self.streamRate = UInt64(0)
+        self.startTime = UInt64(0)
+        self.withdrawnAmount = UInt64(0)
+        self.recipient = Global.creator_address  # Set the creator initially
+        self.balance = UInt64(0)
+        self.isStreaming = bool(False)
+        self.last_withdrawal_time = UInt64(0)  # Initialize last withdrawal time
+
+    # Start a new stream
+    @arc4.abimethod(allow_actions=["NoOp"])
+    def startStream(self, recipient: Account, rate: UInt64, amount: UInt64) -> None:
+        assert Txn.sender == Global.creator_address  # Only the creator can start
+        # Store stream parameters
+        self.recipient = recipient
+        self.streamRate = rate
+        self.startTime = Global.latest_timestamp
+        self.withdrawnAmount = UInt64(0)
+        self.balance += amount
+        self.isStreaming = bool(True)
+        # Reset last withdrawal time to the start time
+        self.last_withdrawal_time = self.startTime
+
+    # Calculate the total streamed amount since the stream started
+    @subroutine
+    def _calculateStreamedAmount(self) -> UInt64:
+        if self.isStreaming:
+            # Calculate total streamed amount since the stream started
+            elapsed_time = Global.latest_timestamp - self.startTime
+            total_streamed = elapsed_time * self.streamRate
+            # Subtract already withdrawn amount to get the available amount
+            return total_streamed - self.withdrawnAmount
+        return UInt64(0)
+
+    # Automatically calculate and withdraw the available streamed amount
+    @arc4.abimethod(allow_actions=["NoOp"])
+    def withdraw(self) -> None:
+        assert Txn.sender == self.recipient  # Only the recipient can withdraw
+
+        # Calculate the available amount for withdrawal
+        available_amount = self._calculateStreamedAmount()
+
+        self.withdrawnAmount += available_amount  # Update the withdrawn amount
+        self.balance -= available_amount
+        # Ensure there's enough to withdraw
+        if available_amount > UInt64(0):
+
+            itxn.InnerTransaction(
+                sender=Global.current_application_address,
+                receiver=self.recipient,
+                amount=available_amount,
+                note=b"Automatic Withdrawal from contract",
+                type=TransactionType.Payment,
+            ).submit()
+
+            # Update last withdrawal time to the current timestamp
+            self.last_withdrawal_time = Global.latest_timestamp
+
+    # Stop the stream and transfer any remaining balance back to the creator
+    @arc4.abimethod(allow_actions=["NoOp"])
+    def stopStream(self) -> None:
+        assert Txn.sender == Global.creator_address  # Only creator can stop
+
+        # Reset stream parameters
+        self.streamRate = UInt64(0)
+        self.isStreaming = bool(False)
+
+        # Transfer remaining funds back to the creator
+        if self.balance > 0:
+            itxn.Payment(
+                receiver=Global.creator_address,
+                amount=self.balance,
+                close_remainder_to=Global.creator_address,
+            ).submit()
+            self.balance = UInt64(0)
