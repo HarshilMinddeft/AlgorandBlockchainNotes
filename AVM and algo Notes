@@ -54,6 +54,12 @@ Every algo smartcontract have an associated application account.
 Algorand dappflow Dispencer sends 1 algo when user enter 1 for withdraw if we use script dispencer eg-PayParams(sender=dispenser.address, receiver=acct.address, amount=1_000_000)
 1000_000 microAlgos is = 1 algo 
 
+results of testnet and localnet are different test algo contracts especially related timing calculation dont test using localnet use testnet for proper results it dosent work in localnet properly
+solution:-
+Chances are your localnet is in "DevMode" which means the chain won't progress forward unless there's a transaction to evaluate. And since it can only advance by 25 seconds at a time, it will quickly be old. If you set DevMode to false it'll work the same as you see on Testnet.
+
+There is no Dict in algo python for storing multiple things its bit complex 
+
 Links =>
 https://algorandfoundation.github.io/puya/language-guide.html
 https://algorandfoundation.github.io/puya/
