@@ -58,7 +58,6 @@ results of testnet and localnet are different test algo contracts especially rel
 solution:-
 Chances are your localnet is in "DevMode" which means the chain won't progress forward unless there's a transaction to evaluate. And since it can only advance by 25 seconds at a time, it will quickly be old. If you set DevMode to false it'll work the same as you see on Testnet.
 
-There is no Dict in algo python for storing multiple things its bit complex 
 
 Links =>
 https://algorandfoundation.github.io/puya/language-guide.html
