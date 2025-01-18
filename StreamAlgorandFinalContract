@@ -1,9 +1,5 @@
 from algopy import *
 
-# Algorand continuous MoneyStream contract V1
-# Contract is designed for continuous AlgoStream from creator/sender's contract to recipient account.
-# Creator can re-create new stream after stoping current stream.
-
 
 class Steam(ARC4Contract):
     # State variables
